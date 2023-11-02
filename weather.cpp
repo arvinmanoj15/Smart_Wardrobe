@@ -1,11 +1,26 @@
 #include <iostream>
 #include <curl/curl.h>
-#include "/home/arvin/Documents/json.hpp"
-
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 using json = nlohmann::json;
 
 const std::string API_KEY = "1095b1ef7fde7db6a9704c45519fdd18";
+
+const std::string FIFO_PATH = "/tmp/myfifo";  // Replace with the desired path for your named pipe
+
+const int32_t rfid_values[] = {
+    837695175856, // Heavy Sweater
+    837695175867, // RFID value for 0-5°C
+    837695175878, // RFID value for 5-10°C
+    837695175889, // RFID value for 10-15°C
+    837695175900, // RFID value for 15-20°C
+    837695175911, // RFID value for 20-25°C
+    837695175922, // RFID value for 25-30°C
+    837695175933  // RFID value for above 30°C
+};
 
 struct MemoryStruct {
     char* memory;
@@ -32,17 +47,24 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
 
 std::string getOutfitSuggestion(double temperature) {
     if (temperature > 30.0) {
-        return "It's very hot! Consider wearing light and breathable clothing like cotton shirts and shorts.";
-    } else if (temperature > 20.0) {
-        return "It's hot. A t-shirt and shorts should be comfortable.";
-    } else if (temperature > 10.0) {
-        return "It's warm. You may want to wear a light jacket over a t-shirt.";
-    } else if (temperature > 5.0) {
-        return "It's cool. A sweater or hoodie would be nice.";
+        return "It's very hot! Consider wearing loose-fitting, breathable clothing like sleeveless tops, shorts, and sandals. Don't forget a wide-brimmed hat and sunglasses.";
+    } else if (temperature >= 25.0) {
+        return "It's hot. Wear short-sleeve shirts, lightweight shorts or skirts, and sandals or sneakers. Apply sunscreen and wear sunglasses.";
+    } else if (temperature >= 20.0) {
+        return "It's warm. Opt for light sweaters or cardigans, casual pants or skirts, and comfortable shoes like loafers or ballet flats.";
+    } else if (temperature >= 15.0) {
+        return "It's moderate. Wear a light jacket or windbreaker, t-shirts or blouses, jeans or chinos, and comfortable walking shoes.";
+    } else if (temperature >= 10.0) {
+        return "It's cool. Consider a light to medium-weight jacket, long-sleeve shirts or sweaters, corduroy or khaki pants, and closed-toe shoes or sneakers.";
+    } else if (temperature >= 5.0) {
+        return "It's cold. Bundle up with a wool or heavy knit sweater, jeans or insulated pants, warm socks, and add a scarf and a beanie.";
+    } else if (temperature >= 0.0) {
+        return "It's very cold. Dress warmly with an insulated parka or heavy winter coat, thermal long underwear or base layers, fleece-lined pants, winter boots, thermal gloves, and a warm hat.";
     } else {
-        return "It's cold. Dress warmly with a heavy jacket and layers.";
+        return "It's freezing cold. Wear an insulated parka or heavy winter coat, thermal long underwear or base layers, fleece-lined pants, winter boots, thermal gloves, and a warm hat.";
     }
 }
+
 
 int main() {
     CURL* curl;
@@ -109,6 +131,38 @@ int main() {
                     std::string outfitSuggestion = getOutfitSuggestion(temperature);
                     std::cout << "Outfit Suggestion: " << outfitSuggestion << std::endl;
 
+                    // Determine RFID value based on temperature range
+                    int32_t rfidValueToSend = 0;
+
+                    if (temperature < 0) {
+                        rfidValueToSend = rfid_values[0];
+                    } else if (temperature < 5) {
+                        rfidValueToSend = rfid_values[1];
+                    } else if (temperature < 10) {
+                        rfidValueToSend = rfid_values[2];
+                    } else if (temperature < 15) {
+                        rfidValueToSend = rfid_values[3];
+                    } else if (temperature < 20) {
+                        rfidValueToSend = rfid_values[4];
+                    } else if (temperature < 25) {
+                        rfidValueToSend = rfid_values[5];
+                    } else if (temperature < 30) {
+                        rfidValueToSend = rfid_values[6];
+                    } else {
+                        rfidValueToSend = rfid_values[7];
+                    }
+
+                    // Open the named pipe for writing and send the RFID value
+                    int fifo_fd = open(FIFO_PATH.c_str(), O_WRONLY);
+
+                    if (fifo_fd == -1) {
+                        std::cerr << "Error opening the named pipe for writing." << std::endl;
+                        return 1;
+                    }
+
+                    write(fifo_fd, &rfidValueToSend, sizeof(rfidValueToSend));
+                    close(fifo_fd);
+
                 } else {
                     std::cerr << "City name, temperature, or weather not found in JSON response." << std::endl;
                 }
@@ -125,3 +179,4 @@ int main() {
     curl_global_cleanup();
     return 0;
 }
+

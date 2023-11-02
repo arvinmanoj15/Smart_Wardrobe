@@ -1,52 +1,36 @@
 #!/usr/bin/env python3
 
-import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
-from time import sleep
 import signal
 
-led = 40
-
-# Setup GPIO
-def setup_gpio():
-    GPIO.setwarnings(False)    # Ignore warning for now
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(led, GPIO.OUT)
-    GPIO.output(led, GPIO.LOW)
-
-# Cleanup GPIO
+# Register signal handlers
 def cleanup_gpio(signal, frame):
-    GPIO.cleanup()
     exit(0)
 
-# Register signal handlers
 signal.signal(signal.SIGINT, cleanup_gpio)
 signal.signal(signal.SIGTERM, cleanup_gpio)
 
+# Define the RFID value to search for
+target_rfid = 837695175856
+
 def main():
     reader = SimpleMFRC522()
+    count = 0  # Initialize a count variable
     
     while True:
         try:
-            id, text = reader.read()
+            id, _ = reader.read()
             print(id)
-            print(type(id))
-            print(text)
-            sleep(2)
+            count += 1  # Increment the count every time an RFID value is read
 
-            if id == 837695175856:
-                sleep(2)
-                GPIO.output(led, GPIO.HIGH)
-                sleep(1)
-                GPIO.output(led, GPIO.LOW)
-            else:
-                GPIO.output(led, GPIO.LOW)
+            if id == target_rfid:
+                print(f"Target RFID ({target_rfid}) found after {count} reads!")
+                break  # Exit the loop when the target RFID is found
 
         except Exception as e:
             print(f"An error occurred: {e}")
             cleanup_gpio(None, None)
 
 if __name__ == "__main__":
-    setup_gpio()
     main()
 
