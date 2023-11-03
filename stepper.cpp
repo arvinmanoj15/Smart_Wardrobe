@@ -7,7 +7,7 @@ const int IN2 = 18; // Connect to L298N IN2
 const int IN3 = 27; // Connect to L298N IN3
 const int IN4 = 22; // Connect to L298N IN4
 
-// Define the delay between steps (adjust as needed for your motor)
+// Define the delay between steps 
 const int stepDelayMicros = 2000; // 2000 microseconds = 2 milliseconds
 
 // Define the sequence of steps for the stepper motor

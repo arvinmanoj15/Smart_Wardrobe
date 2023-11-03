@@ -4,22 +4,24 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <cstring>
+#include "json.hpp"
 
 using json = nlohmann::json;
 
-const std::string API_KEY = "1095b1ef7fde7db6a9704c45519fdd18";
+const std::string API_KEY = "1095b1ef7fde7db6a9704c45519fdd18"; //API Key
 
-const std::string FIFO_PATH = "/tmp/myfifo";  // Replace with the desired path for your named pipe
+const std::string FIFO_PATH = "/tmp/myfifo";  //Pipe name
 
 const int32_t rfid_values[] = {
-    837695175856, // Heavy Sweater
-    837695175867, // RFID value for 0-5°C
-    837695175878, // RFID value for 5-10°C
-    837695175889, // RFID value for 10-15°C
-    837695175900, // RFID value for 15-20°C
-    837695175911, // RFID value for 20-25°C
-    837695175922, // RFID value for 25-30°C
-    837695175933  // RFID value for above 30°C
+    0, // Heavy Sweater
+    1, // RFID value for 0-5°C
+    2, // RFID value for 5-10°C
+    3, // RFID value for 10-15°C
+    4, // RFID value for 15-20°C
+    5, // RFID value for 20-25°C
+    6, // RFID value for 25-30°C
+    7  // RFID value for above 30°C
 };
 
 struct MemoryStruct {
@@ -74,11 +76,13 @@ int main() {
     chunk.memory = (char*)malloc(1);
     chunk.size = 0;
 
-    std::string city_name;
-
+    std::string city_name = "Cambridge,Ontario";
+    
+    /*
     std::cout << "Enter the city name: ";
     std::cin >> city_name;
 
+    */
     std::string api_url = "http://api.openweathermap.org/data/2.5/weather?q=" + city_name + "&appid=" + API_KEY;
 
     curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -161,7 +165,8 @@ int main() {
                     }
 
                     write(fifo_fd, &rfidValueToSend, sizeof(rfidValueToSend));
-                    close(fifo_fd);
+                    
+                    //close(fifo_fd);
 
                 } else {
                     std::cerr << "City name, temperature, or weather not found in JSON response." << std::endl;
