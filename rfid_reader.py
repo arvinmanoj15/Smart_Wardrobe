@@ -11,7 +11,7 @@ led = 40
 rfid_values = [
     837695175856,  # Heavy Sweater
     769133311166,  # RFID value for 0-5°C
-    769903311166,  # RFID value for 5-10°C
+    769133311166,  # RFID value for 5-10°C
     837695175889,  # RFID value for 10-15°C
     837695175900,  # RFID value for 15-20°C
     837695175911,  # RFID value for 20-25°C
@@ -62,9 +62,9 @@ def main():
             id, _ = reader.read()
             
             if id != temp_id_value:
-            	temp_id_value = id;
-            	print(id)
-            	count += 1  # Increment the count every time an RFID value is read
+                temp_id_value = id
+                print(id)
+                count += 1  # Increment the count every time an RFID value is read
 
             if id == rfid_values[id_value]:
                 print(f"Target RFID ({rfid_values[id_value]}) found after {count} reads!")
@@ -73,9 +73,14 @@ def main():
                 GPIO.output(led, GPIO.LOW)
                 break
 
+        # Open the named pipe for writing and send the count value
+        with open("/tmp/myfifo", 'wb') as fifo_writer:
+            count_bytes = count.to_bytes(4, byteorder='little', signed=True)
+            fifo_writer.write(count_bytes)
+            print(f"Sent count ({count}) to the named pipe.")
+
     except FileNotFoundError:
         print("Named pipe '/tmp/myfifo' not found. Make sure it's created by the C++ program.")
 
 if __name__ == "__main__":
     main()
-
