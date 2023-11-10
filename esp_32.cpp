@@ -44,6 +44,7 @@ void loop()
     incomingPacket[packetSize] = 0;
 
     int value = atoi(incomingPacket);
+    value--;
     Serial.print("Received value: ");
     Serial.println(value);
 
