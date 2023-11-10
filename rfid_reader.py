@@ -4,12 +4,13 @@ import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 from time import sleep
 import signal
+import sys
 
 # Define GPIO pins
 led = 40
 
 rfid_values = [
-    837695175856,  # Heavy Sweater
+    769133311166,  # Heavy Sweater
     769133311166,  # RFID value for 0-5°C
     769133311166,  # RFID value for 5-10°C
     837695175889,  # RFID value for 10-15°C
@@ -78,6 +79,7 @@ def main():
             count_bytes = count.to_bytes(4, byteorder='little', signed=True)
             fifo_writer.write(count_bytes)
             print(f"Sent count ({count}) to the named pipe.")
+            sys.exit(0)
 
     except FileNotFoundError:
         print("Named pipe '/tmp/myfifo' not found. Make sure it's created by the C++ program.")

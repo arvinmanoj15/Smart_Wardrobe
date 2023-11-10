@@ -1,29 +1,33 @@
 #!/bin/bash
 
 # Define the states
-STATE_1="Dummy_State_1"
-STATE_2="Dummy_State_2"
-STATE_3="Dummy_State_3"
-STATE_4="Dummy_State_4"
-STATE_5="Dummy_State_5"
-STATE_6="Dummy_State_6"
-STATE_7="Dummy_State_7"
-STATE_8="Dummy_State_8"
-STATE_9="Dummy_State_9"
-STATE_10="Dummy_State_10"
+STATE_1="Weather_Check"
+STATE_2="Stepper_Run"
+STATE_3="RFID_Reading"
+STATE_4="ESP_Coms_LED"
+STATE_5="FINAL"
 
 # Initialize the current state
 state=$STATE_1
+
+# Create the named pipe
+mkfifo /tmp/myfifo
+
+# Give write permission to all users
+chmod a+w /tmp/myfifo
 
 while true; do
     # Handle the current state
     case $state in
         $STATE_1)
             echo "In $state"
+            ./weather &
             state=$STATE_2
             ;;
         $STATE_2)
             echo "In $state"
+            ./rfid_reader.py 
+            # sleep 10 # Sleeping for 10 sec so that the cloth can be identified
             state=$STATE_3
             ;;
         $STATE_3)
@@ -32,29 +36,10 @@ while true; do
             ;;
         $STATE_4)
             echo "In $state"
+            ./esp_32_udp_coms.py
             state=$STATE_5
             ;;
         $STATE_5)
-            echo "In $state"
-            state=$STATE_6
-            ;;
-        $STATE_6)
-            echo "In $state"
-            state=$STATE_7
-            ;;
-        $STATE_7)
-            echo "In $state"
-            state=$STATE_8
-            ;;
-        $STATE_8)
-            echo "In $state"
-            state=$STATE_9
-            ;;
-        $STATE_9)
-            echo "In $state"
-            state=$STATE_10
-            ;;
-        $STATE_10)
             echo "In $state"
             echo "Enter EXIT to exit or CONTINUE to continue:"
             read decision
