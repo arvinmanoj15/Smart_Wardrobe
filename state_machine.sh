@@ -12,9 +12,11 @@ state=$STATE_1
 
 # Create the named pipe
 mkfifo /tmp/myfifo
+# mkfifo /tmp/myfifoesp
 
 # Give write permission to all users
 chmod a+w /tmp/myfifo
+# chmod a+w /tmp/myfifoesp
 
 while true; do
     # Handle the current state
@@ -26,13 +28,13 @@ while true; do
             ;;
         $STATE_2)
             echo "In $state"
-            ./rfid_reader.py 
-            # sleep 10 # Sleeping for 10 sec so that the cloth can be identified
             state=$STATE_3
             ;;
         $STATE_3)
             echo "In $state"
-            state=$STATE_4
+            ./rfid_reader.py &
+            sleep 5 # Sleeping for 2 sec (IMP: If the final writing to pipe not working try adjusting the Sleep time here!)
+	    state=$STATE_4
             ;;
         $STATE_4)
             echo "In $state"
