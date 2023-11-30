@@ -13,7 +13,7 @@ RFID_VALUES = [
     769133311166,  # Heavy Sweater
     769133311166,  # RFID value for 0-5°C
     769133311166,  # RFID value for 5-10°C
-    837695175889,  # RFID value for 10-15°C
+    769133311166,  # RFID value for 10-15°C
     837695175900,  # RFID value for 15-20°C
     837695175911,  # RFID value for 20-25°C
     837695175922,  # RFID value for 25-30°C
@@ -61,7 +61,9 @@ def main():
 
         # Create a new loop for RFID reading and LED control
         while True:
+            # print("I'm going to read")
             id, _ = reader.read()
+            # print("I'm trying to READ")
 
             if id != temp_id_value:
                 temp_id_value = id
@@ -73,6 +75,11 @@ def main():
                 GPIO.output(LED_PIN, GPIO.HIGH)
                 sleep(1)
                 GPIO.output(LED_PIN, GPIO.LOW)
+                
+                with open("/tmp/motor_control_fifo", 'wb') as fifo_writer:
+                    command = "STOP_AND_REVERSE"
+                    fifo_writer.write(command.encode('utf-8'))
+                    print("Sent STOP_AND_REVERSE command to the motor control program")
                 break
 
         # Open the named pipe for writing and send the count value

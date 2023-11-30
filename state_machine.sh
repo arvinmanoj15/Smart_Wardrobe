@@ -12,11 +12,11 @@ state=$STATE_1
 
 # Create the named pipe
 mkfifo /tmp/myfifo
-# mkfifo /tmp/myfifoesp
+mkfifo /tmp/motor_control_fifo
 
 # Give write permission to all users
 chmod a+w /tmp/myfifo
-# chmod a+w /tmp/myfifoesp
+chmod a+w /tmp/motor_control_fifo
 
 while true; do
     # Handle the current state
@@ -28,6 +28,7 @@ while true; do
             ;;
         $STATE_2)
             echo "In $state"
+            ./new_move_stepper.py &
             state=$STATE_3
             ;;
         $STATE_3)
