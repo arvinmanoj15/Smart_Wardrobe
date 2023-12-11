@@ -38,7 +38,7 @@ ccw_fullstep_seq = [
 
 # Variable to control the running of the motor
 running = True
-direction = "cw"  # Change to "ccw" for counterclockwise motion
+direction = "ccw"  # Change to "ccw" for counterclockwise motion
 
 # Function to run the motor
 def run_motor():
@@ -48,7 +48,7 @@ def run_motor():
             for pin in range(4):
                 GPIO.output(control_pins[pin], fullstep[pin])
             #time.sleep(0.001)  # Adjusted delay for smoother operation
-            time.sleep(0.0005)
+            time.sleep(0.00075) #0.0009 & 0.00075 for opposite
 
 # Start the motor in a separate thread
 motor_thread = threading.Thread(target=run_motor)

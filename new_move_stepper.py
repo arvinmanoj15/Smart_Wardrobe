@@ -42,7 +42,7 @@ def run_motor():
                 break
             for pin in range(4):
                 GPIO.output(control_pins[pin], fullstep[pin])
-            time.sleep(delay)
+            time.sleep(0.0009)
     stop_time = time.time()
 
 # Function to read from the named pipe and control the motor
@@ -79,7 +79,7 @@ if run_duration > 0:
         for fullstep in step_seq:
             for pin in range(4):
                 GPIO.output(control_pins[pin], fullstep[pin])
-            time.sleep(delay)
+            time.sleep(0.00075)
 
 # Clean up GPIO
 GPIO.cleanup()
