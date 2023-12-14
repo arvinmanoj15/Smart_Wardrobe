@@ -4,7 +4,8 @@ import socket
 import os
 
 # Set the ESP32's IP address and port
-esp32_ip = '10.0.0.17'  # ESP32's IP address
+# esp32_ip = '10.0.0.17'  # ESP32's IP address House 323
+esp32_ip = '172.20.10.10' # ESP32's IP address Arvin
 esp32_port = 12345  # Connection Port
 
 # Create a UDP socket

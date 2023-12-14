@@ -48,7 +48,7 @@ def run_motor():
             for pin in range(4):
                 GPIO.output(control_pins[pin], fullstep[pin])
             #time.sleep(0.001)  # Adjusted delay for smoother operation
-            time.sleep(0.00075) #0.0009 & 0.00075 for opposite
+            time.sleep(0.00075) #0.0009 front & 0.00075 back for opposite
 
 # Start the motor in a separate thread
 motor_thread = threading.Thread(target=run_motor)

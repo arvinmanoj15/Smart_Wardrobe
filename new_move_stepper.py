@@ -68,6 +68,7 @@ pipe_thread.join()
 
 # Calculate the time to run in the opposite direction
 run_duration = stop_time - start_time if stop_time else 0
+run_duration = run_duration - 6.00
 
 # Run motor in opposite direction for the same duration
 if run_duration > 0:
