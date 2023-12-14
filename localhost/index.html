@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run Bash Script</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <button id="runScript">Start</button>
+    <script>
+        document.getElementById('runScript').onclick = function() {
+            fetch('run_script.php')
+            .then(response => {
+                if(response.ok) {
+                    return response.text();
+                }
+                throw new Error('Something went wrong on the server.');
+            })
+            .then(text => {
+                console.log('Script executed:', text);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        };
+    </script>
+</body>
+</html>
+

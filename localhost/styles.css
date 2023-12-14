@@ -1,0 +1,50 @@
+/* General button reset */
+button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Specific styles for the 'Run Script' button */
+#runScript {
+    background-color: #6f42c1; /* Purple background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Top/bottom padding and left/right padding */
+    border-radius: 20px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Horizontal offset, vertical offset, blur radius, and color */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Font weight */
+    text-transform: uppercase; /* Uppercase text */
+}
+
+/* Hover state for the button */
+#runScript:hover {
+    background-color: #5a36a8; /* Slightly darker purple background on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Larger shadow effect on hover */
+}
+
+/* Active state for the button */
+#runScript:active {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Smaller shadow effect when the button is clicked */
+    transform: translateY(2px); /* Slight downward movement when the button is clicked */
+}
+
+/* Styles to center the button in the page */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* This makes the body take the full height of the viewport */
+    margin: 0; /* This removes the default margin */
+    background-image: url('back.jpg'); /* The background image */
+    background-size: cover; /* Cover the entire viewport */
+    background-position: center center; /* Center the image in the page */
+    background-repeat: no-repeat; /* Do not repeat the image */
+}
+
+/* Ensuring the HTML and body take full height */
+html {
+    height: 100%;
+}
+
